@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Segurança
 SECRET_KEY = os.environ.get('SECRET_KEY', 'chave-insegura-para-dev')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['agrolife.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['agrolifeweb.onrender.com', 'localhost']
 
 # Apps instalados
 INSTALLED_APPS = [
