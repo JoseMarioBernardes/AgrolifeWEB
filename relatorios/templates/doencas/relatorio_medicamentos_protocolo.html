@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Relatório de Animais Medicados com Protocolo Sanitário{% endblock %}
+
+{% block content %}
+<h1>Relatório de Animais Medicados com Protocolo Sanitário</h1>
+
+<table class="tabela-lista">
+  <thead>
+    <tr>
+      <th>Animal</th>
+      <th>Medicamento</th>
+      <th>Dose Aplicada (ml)</th>
+      <th>Preço da Dose (R$)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in aplicacoes %}
+      <tr>
+        <td>{{ item.evento.boi.brinco }}</td>
+        <td>{{ item.medicamento.nome_medicamento }}</td>
+        <td>{{ item.dose_aplicada }}</td>
+        <td>R$ {{ item.preco_dose|floatformat:2 }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="4" class="sem-registro">Nenhuma aplicação encontrada com protocolo sanitário.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Relatório de Animais Manejados{% endblock %}
+
+{% block content %}
+<h1>Relatório de Animais Manejados por Período</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Gerar Relatório</button>
+</form>
+
+{% if resultado %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  {% for tipo, dados in resultado.items %}
+    <div class="relatorio-manejo">
+      <h2>{{ tipo }}</h2>
+
+      <!-- TABELA -->
+      <table class="tabela-lista">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Total de Bois</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in dados %}
+            <tr>
+              <td>{{ item.manejo__data_manejo }}</td>
+              <td>{{ item.total }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- GRÁFICO -->
+      <canvas id="grafico_{{ forloop.counter }}" width="600" height="300"></canvas>
+
+      <script>
+        const ctx{{ forloop.counter }} = document.getElementById('grafico_{{ forloop.counter }}').getContext('2d');
+        const grafico = new Chart(ctx{{ forloop.counter }}, {
+          type: 'bar',
+          data: {
+            labels: [{% for item in dados %}"{{ item.manejo__data_manejo }}",{% endfor %}],
+            datasets: [{
+              label: 'Bois manejados em {{ tipo }}',
+              data: [{% for item in dados %}{{ item.total }},{% endfor %}],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Qtd. de bois' }
+              },
+              x: {
+                title: { display: true, text: 'Data do Manejo' }
+              }
+            }
+          }
+        });
+      </script>
+    </div>
+    <hr>
+  {% endfor %}
+{% endif %}
+{% endblock %}
