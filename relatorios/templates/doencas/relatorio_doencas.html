@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Relatório de Doenças Recorrentes{% endblock %}
+
+{% block content %}
+<h1>Relatório de Doenças Recorrentes</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Gerar Relatório</button>
+</form>
+
+{% if resultado %}
+  <h2>Resumo do Período</h2>
+  <p><strong>Total de bois tratados:</strong> {{ resultado.total_animais }}</p>
+
+  <table class="tabela-lista">
+    <thead>
+      <tr>
+        <th>Doença</th>
+        <th>Bois Tratados</th>
+        <th>Percentual</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in resultado.doencas %}
+        <tr>
+          <td>{{ item.doenca__nome_doenca }}</td>
+          <td>{{ item.bois_tratados }}</td>
+          <td>{{ item.percentual }}%</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}
