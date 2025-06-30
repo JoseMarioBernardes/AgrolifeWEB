@@ -1,22 +1,34 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <h1>Relatório de Mortalidade</h1>
+{% block title %}Taxa de Mortalidade{% endblock %}
 
-  <form method="post">
+{% block content %}
+<div class="lista-container">
+  <div class="lista-header">
+    <h1 class="lista-titulo">Relatório de Mortalidade</h1>
+  </div>
+
+  <form method="post" class="form-container">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Gerar Relatório</button>
+    <div class="form-grid">
+      {{ form.as_p }}
+    </div>
+    <div class="form-actions no-border">
+      <button type="submit" class="botao-acao botao-buscar">Gerar Relatório</button>
+    </div>
   </form>
 
   {% if resultado %}
-    <h2>Resultados</h2>
-    <ul>
-      <li><strong>Rebanho inicial:</strong> {{ resultado.rebanho_inicial }}</li>
-      <li><strong>Entradas no período:</strong> {{ resultado.entradas }}</li>
-      <li><strong>Rebanho acumulado:</strong> {{ resultado.rebanho_acumulado }}</li>
-      <li><strong>Mortes no período:</strong> {{ resultado.mortes }}</li>
-      <li><strong>Taxa de mortalidade:</strong> {{ resultado.taxa }}%</li>
-    </ul>
+    <div class="form-section-divider">
+      <h3>Resultados</h3>
+      <ul class="messages-container">
+        <li class="message success"><strong>Rebanho inicial:</strong> {{ resultado.rebanho_inicial }}</li>
+        <li class="message success"><strong>Entradas no período:</strong> {{ resultado.entradas }}</li>
+        <li class="message success"><strong>Rebanho acumulado:</strong> {{ resultado.rebanho_acumulado }}</li>
+        <li class="message success"><strong>Mortes no período:</strong> {{ resultado.mortes }}</li>
+        <li class="message success"><strong>Taxa de mortalidade:</strong> {{ resultado.taxa }}%</li>
+      </ul>
+    </div>
   {% endif %}
+</div>
 {% endblock %}

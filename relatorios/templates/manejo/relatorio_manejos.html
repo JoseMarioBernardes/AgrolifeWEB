@@ -2,70 +2,96 @@
 {% block title %}Relatório de Animais Manejados{% endblock %}
 
 {% block content %}
-<h1>Relatório de Animais Manejados por Período</h1>
+<div class="lista-container">
+  <div class="lista-header">
+    <h1 class="lista-titulo">Relatório de Animais Manejados por Período</h1>
+  </div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Gerar Relatório</button>
-</form>
+  <form method="post" class="form-container">
+    {% csrf_token %}
+    <div class="form-grid">
+      {{ form.as_p }}
+    </div>
+    <div class="form-actions no-border">
+      <button type="submit" class="botao-acao botao-buscar">Gerar Relatório</button>
+    </div>
+  </form>
 
-{% if resultado %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% if resultado %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  {% for tipo, dados in resultado.items %}
-    <div class="relatorio-manejo">
-      <h2>{{ tipo }}</h2>
+    {% for tipo, dados in resultado.items %}
+      <div class="form-section-divider">
+        <h3>{{ tipo }}</h3>
 
-      <!-- TABELA -->
-      <table class="tabela-lista">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Total de Bois</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in dados %}
-            <tr>
-              <td>{{ item.manejo__data_manejo }}</td>
-              <td>{{ item.total }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        <!-- TABELA -->
+        <div class="tabela-wrapper">
+          <table class="tabela-lista">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Total de Bois</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in dados %}
+                <tr class="linha-tabela">
+                  <td>{{ item.manejo__data_manejo }}</td>
+                  <td>{{ item.total }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
 
-      <!-- GRÁFICO -->
-      <canvas id="grafico_{{ forloop.counter }}" width="600" height="300"></canvas>
+        <!-- GRÁFICO -->
+        <canvas id="grafico_{{ forloop.counter }}" height="300"></canvas>
 
-      <script>
-        const ctx{{ forloop.counter }} = document.getElementById('grafico_{{ forloop.counter }}').getContext('2d');
-        const grafico = new Chart(ctx{{ forloop.counter }}, {
-          type: 'bar',
-          data: {
-            labels: [{% for item in dados %}"{{ item.manejo__data_manejo }}",{% endfor %}],
-            datasets: [{
-              label: 'Bois manejados em {{ tipo }}',
-              data: [{% for item in dados %}{{ item.total }},{% endfor %}],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                beginAtZero: true,
-                title: { display: true, text: 'Qtd. de bois' }
+        <script>
+          const ctx{{ forloop.counter }} = document.getElementById('grafico_{{ forloop.counter }}').getContext('2d');
+          new Chart(ctx{{ forloop.counter }}, {
+            type: 'bar',
+            data: {
+              labels: [{% for item in dados %}"{{ item.manejo__data_manejo }}",{% endfor %}],
+              datasets: [{
+                label: 'Bois manejados em {{ tipo }}',
+                data: [{% for item in dados %}{{ item.total }},{% endfor %}],
+                backgroundColor: '#2563eb',
+                borderColor: '#1e40af',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: 'Qtd. de bois',
+                    color: '#111827'
+                  }
+                },
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Data do Manejo',
+                    color: '#111827'
+                  }
+                }
               },
-              x: {
-                title: { display: true, text: 'Data do Manejo' }
+              plugins: {
+                legend: {
+                  labels: {
+                    color: '#111827'
+                  }
+                }
               }
             }
-          }
-        });
-      </script>
-    </div>
-    <hr>
-  {% endfor %}
-{% endif %}
+          });
+        </script>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
 {% endblock %}

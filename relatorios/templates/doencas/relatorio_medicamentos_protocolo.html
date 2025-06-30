@@ -2,38 +2,52 @@
 {% block title %}Relatório de Animais Medicados com Protocolo Sanitário{% endblock %}
 
 {% block content %}
-<h1>Relatório de Animais Medicados com Protocolo Sanitário</h1>
+<div class="lista-container">
+  <div class="lista-header">
+    <h1 class="lista-titulo">Relatório de Animais Medicados com Protocolo Sanitário</h1>
+  </div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Filtrar</button>
-</form>
+  <form method="post" class="form-container">
+    {% csrf_token %}
+    <div class="form-grid">
+      {{ form.as_p }}
+    </div>
+    <div class="form-actions no-border">
+      <button type="submit" class="botao-acao botao-buscar">Filtrar</button>
+    </div>
+  </form>
 
-{% if aplicacoes is not none %}
-  <table class="tabela-lista">
-    <thead>
-      <tr>
-        <th>Animal</th>
-        <th>Medicamento</th>
-        <th>Dose Aplicada (ml)</th>
-        <th>Preço da Dose (R$)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in aplicacoes %}
-        <tr>
-          <td>{{ item.evento.boi.brinco }}</td>
-          <td>{{ item.medicamento.nome_medicamento }}</td>
-          <td>{{ item.dose_aplicada }}</td>
-          <td>R$ {{ item.preco_dose|floatformat:2 }}</td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="4" class="sem-registro">Nenhuma aplicação encontrada no período com protocolo sanitário.</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% endif %}
+  {% if aplicacoes is not none %}
+    <div class="form-section-divider">
+      <h3>Resultados</h3>
+    </div>
+
+    <div class="tabela-wrapper">
+      <table class="tabela-lista">
+        <thead>
+          <tr>
+            <th>Animal</th>
+            <th>Medicamento</th>
+            <th>Dose Aplicada (ml)</th>
+            <th>Preço da Dose (R$)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in aplicacoes %}
+            <tr class="linha-tabela">
+              <td>{{ item.evento.boi.brinco }}</td>
+              <td>{{ item.medicamento.nome_medicamento }}</td>
+              <td>{{ item.dose_aplicada }}</td>
+              <td>R$ {{ item.preco_dose|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="sem-registro">Nenhuma aplicação encontrada no período com protocolo sanitário.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

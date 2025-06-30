@@ -2,35 +2,90 @@
 {% block title %}Relatório de Doenças Recorrentes{% endblock %}
 
 {% block content %}
-<h1>Relatório de Doenças Recorrentes</h1>
+<div class="lista-container">
+  <div class="lista-header">
+    <h1 class="lista-titulo">Relatório de Doenças Recorrentes</h1>
+  </div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Gerar Relatório</button>
-</form>
+  <form method="post" class="form-container">
+    {% csrf_token %}
+    <div class="form-grid">
+      {{ form.as_p }}
+    </div>
+    <div class="form-actions no-border">
+      <button type="submit" class="botao-acao botao-buscar">Gerar Relatório</button>
+    </div>
+  </form>
 
-{% if resultado %}
-  <h2>Resumo do Período</h2>
-  <p><strong>Total de bois tratados:</strong> {{ resultado.total_animais }}</p>
+  {% if resultado %}
+    <div class="form-section-divider">
+      <h3>Resumo do Período</h3>
+      <ul class="messages-container">
+        <li class="message success"><strong>Total de bois tratados:</strong> {{ resultado.total_animais }}</li>
+      </ul>
+    </div>
 
-  <table class="tabela-lista">
-    <thead>
-      <tr>
-        <th>Doença</th>
-        <th>Bois Tratados</th>
-        <th>Percentual</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in resultado.doencas %}
-        <tr>
-          <td>{{ item.doenca__nome_doenca }}</td>
-          <td>{{ item.bois_tratados }}</td>
-          <td>{{ item.percentual }}%</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% endif %}
+    <div class="tabela-wrapper">
+      <table class="tabela-lista">
+        <thead>
+          <tr>
+            <th>Doença</th>
+            <th>Bois Tratados</th>
+            <th>Percentual</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in resultado.doencas %}
+            <tr class="linha-tabela">
+              <td>{{ item.doenca__nome_doenca }}</td>
+              <td>{{ item.bois_tratados }}</td>
+              <td>{{ item.percentual }}%</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- GRÁFICO DE PIZZA -->
+    <div class="form-section-divider">
+      <h3>Distribuição de Doenças</h3>
+      <canvas id="graficoDoencas" height="300"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const ctx = document.getElementById('graficoDoencas').getContext('2d');
+      const graficoDoencas = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: [{% for item in resultado.doencas %}"{{ item.doenca__nome_doenca }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+          datasets: [{
+            label: 'Bois tratados por doença',
+            data: [{% for item in resultado.doencas %}{{ item.bois_tratados }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+            backgroundColor: [
+              '#2563eb', '#16a34a', '#f59e0b', '#dc2626', '#7c3aed', '#0ea5e9', '#d946ef', '#059669', '#f43f5e'
+            ],
+            borderColor: '#fff',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                color: '#111827',
+                font: { family: 'Poppins', size: 14 }
+              }
+            },
+            title: {
+              display: false
+            }
+          }
+        }
+      });
+    </script>
+  {% endif %}
+</div>
 {% endblock %}
