@@ -1,5 +1,4 @@
 from django.views.generic.edit import FormView
-from django.views.generic import TemplateView
 from django.db.models import Q, F, Count, ExpressionWrapper, DecimalField
 from boi.models import Boi
 from relatorios.forms import PeriodoForm
@@ -96,21 +95,26 @@ class RelatorioAnimaisManejadosView(FormView):
         context['resultado'] = dados_por_tipo
         return self.render_to_response(context)
     
-class RelatorioMedicamentosPorProtocoloView(TemplateView):
+class RelatorioMedicamentosPorProtocoloView(FormView):
     template_name = 'doencas/relatorio_medicamentos_protocolo.html'
+    form_class = PeriodoForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def form_valid(self, form):
+        data_inicio = form.cleaned_data['data_inicio']
+        data_fim = form.cleaned_data['data_fim']
 
-        # Seleciona bois que receberam protocolo
+        # Bois com protocolo
         bois_com_protocolo = BoiManejo.objects.filter(
             protocolo_sanitario__isnull=False
         ).values_list('boi_id', flat=True)
 
-        # Medicamentos aplicados nesses bois
+        # Medicamentos aplicados nesses bois dentro do período
         aplicacoes = (
             MedicamentoAplicado.objects
-            .filter(evento__boi_id__in=bois_com_protocolo)
+            .filter(
+                evento__boi_id__in=bois_com_protocolo,
+                evento__data_aplicacao_medicamento__range=(data_inicio, data_fim)
+            )
             .select_related('medicamento', 'evento__boi')
             .annotate(
                 preco_dose=ExpressionWrapper(
@@ -120,5 +124,6 @@ class RelatorioMedicamentosPorProtocoloView(TemplateView):
             )
         )
 
+        context = self.get_context_data(form=form)
         context['aplicacoes'] = aplicacoes
-        return context
+        return self.render_to_response(context)
