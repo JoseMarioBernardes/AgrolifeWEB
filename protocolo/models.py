@@ -29,7 +29,10 @@ class ProtocoloSanitario(models.Model):
 
     class Meta:
         db_table = 'protocolo_sanitario'
-        
+    
+    def __str__(self):
+        return self.nome_protocolo
+    
 class ProtocoloMedicamento(models.Model):
     idprotocolo_medicamento = models.AutoField(
         primary_key=True,
@@ -53,3 +56,6 @@ class ProtocoloMedicamento(models.Model):
 
     class Meta:
         db_table = 'protocolo_medicamento'
+    
+    def __str__(self):
+        return f"{self.medicamento} | {self.protocolo_sanitario}"

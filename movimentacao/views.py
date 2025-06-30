@@ -29,8 +29,6 @@ class MovimentacaoView(View):
             return redirect('listamovimentacao')
         return render(request, self.template_name, {'form': form})
 
-
-#revisar o querySet
 class MovimentacaoListView(ListView):
     model = Movimentacao
     template_name = 'movimentacao/listamovimentacao.html'
@@ -63,7 +61,6 @@ class MovimentacaoListView(ListView):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('q', '')
         return context
-
 
 class MovimentacaoDetailView(DetailView):
     model = Movimentacao

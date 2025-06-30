@@ -1,10 +1,11 @@
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DeleteView, UpdateView, DetailView
-from django.forms import inlineformset_factory
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from medicamento.models import Medicamento, AplicacaoEvento
 from medicamento.forms import MedicamentoAplicadoFormSet, MedicamentoForm, AplicacaoEventoForm
 
+# CRUD medicamento
 class MedicamentoCreateView(CreateView):
     model = Medicamento
     form_class = MedicamentoForm
@@ -15,6 +16,21 @@ class MedicamentoListView(ListView):
     model = Medicamento
     template_name = 'medicamento/listamedicamento.html'
     context_object_name = 'medicamentos'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related(
+            'tipo_medicamento', 'principio_ativo', 'laboratorio'
+        ).order_by('nome_medicamento')
+
+        search = self.request.GET.get('search')
+
+        if search:
+            queryset = queryset.filter(
+                Q(nome_medicamento__icontains=search) |
+                Q(tipo_medicamento__nome_medicamento__icontains=search)
+            )
+
+        return queryset
 
 class MedicamentoDeleteView(DeleteView):
     model = Medicamento
@@ -32,10 +48,7 @@ class MedicamentoDetailView(DetailView):
     template_name = 'medicamento/detalhemedicamento.html'
     context_object_name = 'medicamento'    
     
-
-
-
-
+# Aplicacao Medicamento
 class AplicacaoEventoCreateView(CreateView):
     model = AplicacaoEvento
     form_class = AplicacaoEventoForm
@@ -109,7 +122,6 @@ class AplicacaoEventoUpdateView(UpdateView):
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
-# ----------- DETALHE DA APLICAÇÃO DE MEDICAMENTO -----------
 class AplicacaoEventoDetailView(DetailView):
     model = AplicacaoEvento
     template_name = 'aplicarmedicamento/detalheaplicacao.html'
