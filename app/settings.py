@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'medicamento',
     'movimentacao',
     'protocolo',
+    'relatorios',
 ]
 
 # Middleware
