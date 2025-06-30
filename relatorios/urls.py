@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RelatorioMortalidadeView
+from relatorios.views import RelatorioMortalidadeView, RelatorioDoencasView
 
 urlpatterns = [
     path('mortalidade/', RelatorioMortalidadeView.as_view(), name='relatorio_mortalidade'),
