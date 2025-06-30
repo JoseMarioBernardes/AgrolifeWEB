@@ -543,3 +543,14 @@ body {
     font-size: 14px;
   }
 }
+
+.grafico-wrapper {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 16px;
+}
+
+.grafico-wrapper canvas {
+  width: 100% !important;
+  height: auto !important;
+}

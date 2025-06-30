@@ -45,7 +45,9 @@
         </div>
 
         <!-- GRÁFICO -->
-        <canvas id="grafico_{{ forloop.counter }}" height="300"></canvas>
+        <div class="grafico-wrapper">
+          <canvas id="graficoDoencas"></canvas>
+        </div>
 
         <script>
           const ctx{{ forloop.counter }} = document.getElementById('grafico_{{ forloop.counter }}').getContext('2d');
